@@ -1,5 +1,5 @@
 const street = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
-  attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+  attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, BubbleBeregaTeam © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
   maxZoom: 18,
   id: "mapbox.streets",
   accessToken: API_KEY
@@ -8,7 +8,7 @@ const street = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png
 map = L.map("map", {
   center: [38.9072, -77.0369],
   zoom: 12,
-  layers: [street] //.concat(layerGrList)
+  layers: [street]
 });
 
 // POINTS DATA
@@ -57,7 +57,7 @@ function getEmoji(name) {
       }
     }
   }
-  return "🔵" // blue circle
+  return "🔵"
 }
 // Get the POINS DATA and add markerpoints (emoji) to the map
 features_link = "http://data.codefordc.org/dataset/511db4d1-d4ae-437c-a5a0-3794e9a8f608/resource/e3b4476c-3d96-461a-baea-d9b54752ab41/download/district-of-columbia-poi.geojson"
@@ -76,37 +76,18 @@ d3.json(features_link, function (data) {
       markers_dict[category] = [L.marker([coord[1], coord[0]], { icon: L.divIcon({ html: getEmoji(name) }) }).bindPopup(name)];
     }
   }
-  var overlayMaps = {};
-  layerGrList = [];
+  const overlayMaps = {};
+  let layerGrList = [];
   for (category in markers_dict) {
     overlayMaps[category] = L.layerGroup(markers_dict[category]);
     layerGrList.push(L.layerGroup(markers_dict[category]));
   }
 
-  var baseMap = { "streetMap": street };
+  const baseMap = {"streetMap": street};
 
   L.control.layers(baseMap, overlayMaps, {
     collapsed: false
   }).addTo(map);
-  //This code only prints the categories in the console. It can be commented out
-  // var testcat = {};
-  // var feat = data.features;
-  // for (var i = 0; i < feat.length; i++) {
-  //   var cat = feat[i].properties.CATEGORY;
-  //   var name = feat[i].properties.NAME;
-  //   if (cat != undefined && name != undefined) {
-  //     if (cat in testcat) {
-  //       if (name in testcat[cat]) {
-  //         testcat[cat][name] += 1;
-  //       } else {
-  //         testcat[cat][name] = 1;
-  //       }
-  //     } else {
-  //       testcat[cat] = { name: 1 };
-  //     }
-  //   }
-  // }
-  // console.log(testcat);
 });
 
 //WARDS and CENSUS DATA 
@@ -143,7 +124,7 @@ d3.json(census_link, function (data) {
           const other = parseInt(ward.POP_OTHER_RACE);
           const hispanic = parseInt(ward.HISPANIC_OR_LATINO);
           const white = parseInt(ward.POP_2011_2015) - (black + native + asian + hawaii + other);
-          var trace1 = [{
+          const trace1 = [{
             values: [white, black, hispanic, native, asian, hawaii, other],
             labels: ["White", "Black/African American", "Hispanic/Latino", "Native American", "Asian", "Hawaiian", "other"],
             type: "pie"
@@ -179,7 +160,6 @@ d3.json(census_link, function (data) {
           const chart_div = document.getElementById("plots");
           popup.setContent(chart_div);
 
-          //Clear the plots every time the popul is closed 
           popup._closeButton.onclick = function () {
             d3.select('.pie').html("");
             d3.select('.bar').html("");
